@@ -4,9 +4,9 @@ FROM ubuntu:24.04
 # 设置环境变量以避免交互式安装时的弹窗
 ENV DEBIAN_FRONTEND=noninteractive
 
-# 2. 备份原有源并替换为阿里云 24.04 (noble) 源
-# 注意：Ubuntu 24.04 的代号是 noble
-RUN cp /etc/apt/sources.list /etc/apt/sources.list.bak && \
+# 2. 替换为阿里云 24.04 (noble) 源
+# Ubuntu 24.04 使用 DEB822 格式（ubuntu.sources），需同时覆盖两处
+RUN rm -f /etc/apt/sources.list.d/ubuntu.sources && \
     echo 'deb http://mirrors.aliyun.com/ubuntu/ noble main restricted universe multiverse' > /etc/apt/sources.list && \
     echo 'deb http://mirrors.aliyun.com/ubuntu/ noble-updates main restricted universe multiverse' >> /etc/apt/sources.list && \
     echo 'deb http://mirrors.aliyun.com/ubuntu/ noble-backports main restricted universe multiverse' >> /etc/apt/sources.list && \

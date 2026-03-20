@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  ncatbot:
+    build: .
+    container_name: ncatbot
+    stdin_open: true
+    tty: true
+    ports:
+      - "6099:6099"   # NapCat WebUI
+      - "3001:3001"   # NapCat WebSocket
+    volumes:
+      - ./data/config.yaml:/root/ncatbot/config.yaml     # 配置文件
+      - ./data/plugins:/root/ncatbot/plugins              # 插件目录
+      - ./data/logs:/root/ncatbot/logs                    # 日志目录
+      - napcat_data:/root/.config/QQ                     # NapCat 登录态持久化（重启后无需重新扫码）
+
+volumes:
+  napcat_data:
+    environment:
+      - TZ=Asia/Shanghai
+    restart: unless-stopped
+    command: ["sh", "-c", "source /root/ncatbot/.venv/bin/activate && ncatbot run"]

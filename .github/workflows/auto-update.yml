@@ -1,0 +1,84 @@
+name: Auto Update NcatBot Docker Image
+
+on:
+  schedule:
+    # 每天 UTC 0:00、8:00、16:00 检查（北京时间 8:00、16:00、0:00）
+    - cron: '0 0,8,16 * * *'
+  workflow_dispatch: # 允许手动触发
+
+env:
+  DOCKERHUB_REPO: huanyp/ncatbot
+  IMAGE_NAME: huanyp/ncatbot
+
+jobs:
+  check-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check latest ncatbot5 version on PyPI
+        id: check_version
+        run: |
+          LATEST=$(curl -s https://pypi.org/pypi/ncatbot5/json | python3 -c "import sys,json; print(json.load(sys.stdin)['info']['version'])")
+          echo "latest=$LATEST" >> "$GITHUB_OUTPUT"
+          echo "PyPI latest: $LATEST"
+
+      - name: Get last built version from Docker Hub
+        id: current_version
+        run: |
+          # 从 Docker Hub 镜像的 label 中获取上次构建的版本
+          TOKEN=$(curl -s "https://auth.docker.io/token?service=registry.docker.io&scope=repository:${{ env.DOCKERHUB_REPO }}:pull" | python3 -c "import sys,json; print(json.load(sys.stdin)['token'])")
+          MANIFEST=$(curl -s -H "Authorization: Bearer $TOKEN" -H "Accept: application/vnd.docker.distribution.manifest.v2+json" "https://registry-1.docker.io/v2/${{ env.DOCKERHUB_REPO }}/manifests/latest" 2>/dev/null)
+          DIGEST=$(echo "$MANIFEST" | python3 -c "import sys,json; print(json.load(sys.stdin).get('config',{}).get('digest',''))" 2>/dev/null || echo "")
+          if [ -n "$DIGEST" ]; then
+            CURRENT=$(curl -s -H "Authorization: Bearer $TOKEN" "https://registry-1.docker.io/v2/${{ env.DOCKERHUB_REPO }}/blobs/$DIGEST" 2>/dev/null | python3 -c "import sys,json; print(json.load(sys.stdin).get('config',{}).get('Labels',{}).get('ncatbot.version','unknown'))" 2>/dev/null || echo "unknown")
+          else
+            CURRENT="unknown"
+          fi
+          echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
+          echo "Current built version: $CURRENT"
+
+      - name: Compare versions
+        id: compare
+        run: |
+          if [ "${{ steps.check_version.outputs.latest }}" != "${{ steps.current_version.outputs.current }}" ]; then
+            echo "needs_build=true" >> "$GITHUB_OUTPUT"
+            echo "New version detected: ${{ steps.check_version.outputs.latest }} (current: ${{ steps.current_version.outputs.current }})"
+          else
+            echo "needs_build=false" >> "$GITHUB_OUTPUT"
+            echo "Already up to date: ${{ steps.current_version.outputs.current }}"
+          fi
+
+      - name: Checkout
+        if: steps.compare.outputs.needs_build == 'true'
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        if: steps.compare.outputs.needs_build == 'true'
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        if: steps.compare.outputs.needs_build == 'true'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build base images
+        if: steps.compare.outputs.needs_build == 'true'
+        run: |
+          docker build -t ubuntu_cn:1.0 ./ubuntu_cn/
+          docker build -t ncatbot_env:0.3 ./ncatbot_env/
+
+      - name: Build and push main image
+        if: steps.compare.outputs.needs_build == 'true'
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          no-cache: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:latest
+            ${{ env.IMAGE_NAME }}:5
+            ${{ env.IMAGE_NAME }}:${{ steps.check_version.outputs.latest }}
+          labels: |
+            ncatbot.version=${{ steps.check_version.outputs.latest }}
+            org.opencontainers.image.description=NcatBot5 QQ Bot Docker Image (ncatbot5 v${{ steps.check_version.outputs.latest }})

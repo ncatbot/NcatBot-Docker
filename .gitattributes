@@ -1,0 +1,12 @@
+# 默认：文本文件 Windows 检出用 CRLF，提交时统一转为 LF
+* text=auto
+
+# Shell 脚本强制使用 LF（在 Linux 容器中执行，CRLF 会导致报错）
+*.sh text eol=lf
+
+# Dockerfile 与 YAML 也统一用 LF
+Dockerfile text eol=lf
+*.yml      text eol=lf
+*.yaml     text eol=lf
+*.toml     text eol=lf
+*.py       text eol=lf
