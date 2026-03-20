@@ -102,8 +102,8 @@ ncatbot-docker/
 
 ```bash
 # 1. 构建基础镜像
-docker build -t ubuntu_cn:1.0 ./ubuntu_cn/
-docker build -t ncatbot_env:0.2 ./ncatbot_env/
+docker build -t ubuntu_cn ./ubuntu_cn/
+docker build -t ncatbot_env ./ncatbot_env/
 
 # 2. 构建主镜像
 docker build -t ncatbot:latest .
