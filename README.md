@@ -66,8 +66,8 @@ plugin:
 
 本项目采用多层 Docker 镜像设计：
 
-- `ubuntu_cn:1.0` — 基础 Ubuntu 24.04 中文环境镜像
-- `ncatbot_env:0.2` — Python 3.12 + NcatBot5 + NapCat/QQ 预装环境镜像
+- `ubuntu_cn` — 基础 Ubuntu 24.04 中文环境镜像
+- `ncatbot_env` — Python 3.12 + NcatBot5 + NapCat/QQ 预装环境镜像
 - 主镜像 — 完整的机器人应用镜像（含配置、示例插件、启动脚本）
 
 ```
