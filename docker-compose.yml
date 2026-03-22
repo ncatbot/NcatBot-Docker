@@ -3,6 +3,7 @@ services:
     image: huanyp/ncatbot:latest
     stdin_open: true
     tty: true
+    container_name: ncatbot
     ports:
       - "6099:6099"   # NapCat WebUI
       - "3001:3001"   # NapCat WebSocket
