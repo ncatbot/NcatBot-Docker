@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   ncatbot:
     build: .
@@ -12,10 +11,7 @@ services:
       - ./data/config.yaml:/root/ncatbot/config.yaml     # 配置文件
       - ./data/plugins:/root/ncatbot/plugins              # 插件目录
       - ./data/logs:/root/ncatbot/logs                    # 日志目录
-      - napcat_data:/root/.config/QQ                     # NapCat 登录态持久化（重启后无需重新扫码）
-
-volumes:
-  napcat_data:
+      - ./data/QQ:/root/.config/QQ                     # NapCat 登录态持久化（重启后无需重新扫码）
     environment:
       - TZ=Asia/Shanghai
     restart: unless-stopped
