@@ -6,16 +6,16 @@ $OutputEncoding = [System.Text.Encoding]::UTF8
 
 $ErrorActionPreference = "Stop"
 
-Write-Host "=== Step 1/3: 构建基础镜像 ubuntu_cn:1.0 ===" -ForegroundColor Cyan
-docker build -t ubuntu_cn:1.0 ./ubuntu_cn/
+Write-Host "=== Step 1/3: 构建基础镜像 ubuntu_cn ===" -ForegroundColor Cyan
+docker build -t ubuntu_cn ./ubuntu_cn/
 if ($LASTEXITCODE -ne 0) { Write-Error "ubuntu_cn 构建失败"; exit 1 }
 
-Write-Host "=== Step 2/3: 构建环境镜像 ncatbot_env:0.2 ===" -ForegroundColor Cyan
-docker build -t ncatbot_env:0.3 ./ncatbot_env/
+Write-Host "=== Step 2/3: 构建环境镜像 ncatbot_env ===" -ForegroundColor Cyan
+docker build -t ncatbot_env ./ncatbot_env/
 if ($LASTEXITCODE -ne 0) { Write-Error "ncatbot_env 构建失败"; exit 1 }
 
 Write-Host "=== Step 3/3: 构建最终镜像 huanyp/ncatbot ===" -ForegroundColor Cyan
-docker build -t huanyp/ncatbot:latest -t huanyp/ncatbot:5 .
+docker build --no-cache -t huanyp/ncatbot:latest .
 if ($LASTEXITCODE -ne 0) { Write-Error "ncatbot 构建失败"; exit 1 }
 
 Write-Host "=== 全部构建完成 ===" -ForegroundColor Green

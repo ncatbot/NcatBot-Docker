@@ -1,4 +1,4 @@
-FROM ubuntu_cn:1.0
+FROM ubuntu_cn
 
 # 确保 Python 始终以 UTF-8 模式输出（防止 Windows 终端乱码）
 ENV PYTHONUTF8=1
