@@ -1,0 +1,11 @@
+bot_uin: '123456'
+root: '123456'
+adapters:
+  - type: napcat
+    platform: qq
+    enabled: true
+    config:
+      ws_uri: ws://localhost:3001
+      ws_token: napcat_ws
+plugin:
+  load_plugin: true

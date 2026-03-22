@@ -29,4 +29,4 @@ WORKDIR /root/ncatbot
 EXPOSE 3001 6099
 
 # 默认命令：显示欢迎信息，初始化项目，再启动 Bot
-CMD ["sh", "-c", "echo \"$(cat /root/ncatbot/welcome.txt)\" && ncatbot init && ncatbot run"]
+CMD ["sh", "-c", "echo \"$(cat /root/ncatbot/welcome.txt)\" && ncatbot run"]
