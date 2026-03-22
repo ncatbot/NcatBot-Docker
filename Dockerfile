@@ -7,8 +7,6 @@ ENV PYTHONIOENCODING=utf-8
 # 将虚拟环境路径置于 PATH 最前，进入容器后自动生效，无需 source activate
 ENV PATH="/root/ncatbot/.venv/bin:$PATH"
 
-# 拷贝配置文件
-COPY resources/config.yaml /root/ncatbot/
 COPY resources/welcome.txt /root/ncatbot/
 
 # 更新 ncatbot 到最新版并确认 NapCat 已安装，同时记录版本号到 label

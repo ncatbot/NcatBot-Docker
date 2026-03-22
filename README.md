@@ -81,7 +81,6 @@ ncatbot-docker/
 ├── resources/
 │   ├── config.yaml              # 机器人配置文件
 │   ├── main.py                  # 备用程序入口（高级用法）
-│   ├── start.sh                 # 启动脚本
 │   ├── welcome.txt              # 欢迎信息
 │   └── plugins/
 │       └── hello_world/         # 示例插件
