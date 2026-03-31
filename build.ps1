@@ -6,8 +6,8 @@ $OutputEncoding = [System.Text.Encoding]::UTF8
 
 $ErrorActionPreference = "Stop"
 
-Write-Host "=== Step 1/3: 构建基础镜像 ubuntu_cn ===" -ForegroundColor Cyan
-docker build -t ubuntu_cn ./ubuntu_cn/
+Write-Host "=== Step 1/3: 构建基础镜像 ubuntu_cn（阿里云源，适合本地/国内网络）===" -ForegroundColor Cyan
+docker build --build-arg USE_CN_MIRROR=1 -t ubuntu_cn ./ubuntu_cn/
 if ($LASTEXITCODE -ne 0) { Write-Error "ubuntu_cn 构建失败"; exit 1 }
 
 Write-Host "=== Step 2/3: 构建环境镜像 ncatbot_env ===" -ForegroundColor Cyan
