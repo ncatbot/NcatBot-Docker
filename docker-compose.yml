@@ -11,7 +11,10 @@ services:
       - ./data/config.yaml:/root/ncatbot/config.yaml     # 配置文件
       - ./data/plugins:/root/ncatbot/plugins              # 插件目录
       - ./data/logs:/root/ncatbot/logs                    # 日志目录
+      - ./data/data:/root/ncatbot/data                    # 数据目录
       - ./data/QQ:/root/.config/QQ                     # NapCat 登录态持久化（重启后无需重新扫码）
     environment:
       - TZ=Asia/Shanghai
+    stop_signal: SIGINT
+    stop_grace_period: 8s
     restart: unless-stopped

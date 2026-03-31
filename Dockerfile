@@ -8,6 +8,8 @@ ENV PYTHONIOENCODING=utf-8
 ENV PATH="/root/ncatbot/.venv/bin:$PATH"
 
 COPY resources/welcome.txt /root/ncatbot/
+COPY resources/entrypoint.sh /root/ncatbot/entrypoint.sh
+RUN chmod +x /root/ncatbot/entrypoint.sh
 
 # 更新 ncatbot 到最新版并确认 NapCat 已安装，同时记录版本号到 label
 RUN . /root/ncatbot/.venv/bin/activate && \
@@ -28,5 +30,6 @@ WORKDIR /root/ncatbot
 # 暴露 NapCat 相关端口
 EXPOSE 3001 6099
 
-# 默认命令：显示欢迎信息，初始化项目，再启动 Bot
-CMD ["sh", "-c", "echo \"$(cat /root/ncatbot/welcome.txt)\" && ncatbot run"]
+# 使用 entrypoint 脚本，exec 使 ncatbot 成为 PID 1 以接收信号实现优雅退出
+STOPSIGNAL SIGINT
+ENTRYPOINT ["/root/ncatbot/entrypoint.sh"]
