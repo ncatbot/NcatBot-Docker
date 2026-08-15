@@ -1,9 +1,6 @@
 name: Auto Update NcatBot Docker Image
 
 on:
-  schedule:
-    # 每天 UTC 0:00、8:00、16:00 检查（北京时间 8:00、16:00、0:00）
-    - cron: '0 0,8,16 * * *'
   workflow_dispatch: # 允许手动触发
 
 env:
